@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <h2 class="text-center mb-4">Create Account</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- First Name -->
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    {{ form.first_name }}
+
+                    {% if form.first_name.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.first_name.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    {{ form.last_name }}
+
+                    {% if form.last_name.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.last_name.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+
+                    {% if form.email.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.email.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    {{ form.username }}
+
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.username.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    {{ form.password1 }}
+
+                    <div class="form-text">
+                        Your password must:
+                        <ul class="mb-0 mt-1">
+                            <li>Be at least 8 characters long</li>
+                            <li>Not be too similar to your personal information</li>
+                            <li>Not be a commonly used password</li>
+                            <li>Not be entirely numeric</li>
+                        </ul>
+                    </div>
+
+                    {% if form.password1.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.password1.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                    <label class="form-label">Confirm Password</label>
+                    {{ form.password2 }}
+
+                    {% if form.password2.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.password2.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary w-100">
+                    Create Account
+                </button>
+
+            </form>
+
+            <p class="text-center mt-3">
+                Already have an account?
+                <a href="{% url 'login' %}">Login</a>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

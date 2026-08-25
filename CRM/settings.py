@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'website',
+    'customers',
+    'products',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +85,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "crm2",
         "USER": "postgres",
-        "PASSWORD": "admin123",
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
         "HOST": "localhost",
         "PORT": "5432",
     }

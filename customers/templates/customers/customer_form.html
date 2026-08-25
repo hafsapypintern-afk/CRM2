@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h2 class="mb-4">
+                {% if customer %}
+                    Edit Customer
+                {% else %}
+                    Add Customer
+                {% endif %}
+            </h2>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+
+                    <input
+                        type="text"
+                        name="first_name"
+                        class="form-control"
+                        value="{{ customer.first_name|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+
+                    <input
+                        type="text"
+                        name="last_name"
+                        class="form-control"
+                        value="{{ customer.last_name|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        value="{{ customer.email|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+
+                    <input
+                        type="text"
+                        name="phone_number"
+                        class="form-control"
+                        value="{{ customer.phone_number|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+
+                    <textarea
+                        name="address"
+                        class="form-control"
+                        rows="3"
+                        required
+                    >{{ customer.address|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">City</label>
+
+                    <input
+                        type="text"
+                        name="city"
+                        class="form-control"
+                        value="{{ customer.city|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    {% if customer %}
+                        Update Customer
+                    {% else %}
+                        Create Customer
+                    {% endif %}
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

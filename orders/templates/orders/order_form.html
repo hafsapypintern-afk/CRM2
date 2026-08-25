@@ -1,0 +1,216 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h2 class="mb-4">
+                        {% if order %}
+                            Update Order
+                        {% else %}
+                            Create Order
+                        {% endif %}
+                    </h2>
+
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <!-- Customer -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Customer
+                            </label>
+
+                            <select
+                                name="customer"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Customer
+                                </option>
+
+                                {% for customer in customers %}
+
+                                    <option
+                                        value="{{ customer.id }}"
+                                        {% if order and order.customer.id == customer.id %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ customer.first_name }}
+                                        {{ customer.last_name }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Status -->
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            <select
+                                name="status"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="Pending">
+                                    Pending
+                                </option>
+
+                                <option value="Processing">
+                                    Processing
+                                </option>
+
+                                <option value="Completed">
+                                    Completed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        {% if not order %}
+
+                            <!-- Products -->
+
+                            <h5 class="mb-3">
+                                Select Products
+                            </h5>
+
+                            {% for product in products %}
+
+                                <div class="card mb-3">
+
+                                    <div class="card-body">
+
+                                        <div class="row align-items-center">
+
+                                            <div class="col-md-7">
+
+                                                <div class="form-check">
+
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        name="products"
+                                                        value="{{ product.id }}"
+                                                        id="product{{ product.id }}"
+                                                    >
+
+                                                    <label
+                                                        class="form-check-label"
+                                                        for="product{{ product.id }}"
+                                                    >
+
+                                                        <strong>
+                                                            {{ product.product_name }}
+                                                        </strong>
+
+                                                        <br>
+
+                                                        <small class="text-muted">
+                                                            Price:
+                                                            ${{ product.product_price }}
+                                                            |
+                                                            Stock:
+                                                            {{ product.stock }}
+                                                        </small>
+
+                                                    </label>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-md-5">
+
+                                                <label class="form-label">
+                                                    Quantity
+                                                </label>
+
+                                                <input
+                                                    type="number"
+                                                    name="quantity_{{ product.id }}"
+                                                    class="form-control"
+                                                    min="1"
+                                                    value="1"
+                                                >
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% empty %}
+
+                                <div class="alert alert-warning">
+                                    No products available.
+                                </div>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            {% if order %}
+                                Update Order
+                            {% else %}
+                                Create Order
+                            {% endif %}
+                        </button>
+
+
+                        <a
+                            href="{% url 'order_list' %}"
+                            class="btn btn-secondary"
+                        >
+                            Cancel
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>{{ product.product_name }}</h2>
+            <p class="text-muted">
+                Product Details
+            </p>
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'product_update' product.id %}"
+                class="btn btn-primary"
+            >
+                Update
+            </a>
+
+            <a
+                href="{% url 'product_delete' product.id %}"
+                class="btn btn-danger"
+            >
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="mb-4">
+                Product Information
+            </h5>
+
+            <p>
+                <strong>Name:</strong>
+                {{ product.product_name }}
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                {{ product.product_description }}
+            </p>
+
+            <p>
+                <strong>Price:</strong>
+                ${{ product.product_price }}
+            </p>
+
+            <p>
+                <strong>Stock:</strong>
+                {{ product.stock }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="{% url 'product_list' %}"
+        class="btn btn-secondary mt-4"
+    >
+        Back to Products
+    </a>
+
+</div>
+
+{% endblock %}
+
