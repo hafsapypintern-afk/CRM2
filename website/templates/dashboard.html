@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -233,6 +232,343 @@
 
                 <p class="text-muted mb-0">
                     No customers have been added yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Orders -->
+    <div class="card shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h4 class="mb-0">
+                    Recent Orders
+                </h4>
+
+                <a
+                    href="{% url 'order_list' %}"
+                    class="btn btn-sm btn-outline-primary"
+                >
+                    View All
+                </a>
+
+            </div>
+
+
+            {% if recent_orders_with_items %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Products</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for order in recent_orders_with_items %}
+
+                                <tr>
+
+                                    <td>
+                                        #{{ order.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.customer.first_name }}
+                                        {{ order.customer.last_name }}
+                                    </td>
+
+                                    <td>
+
+                                        {% for item in order.items.all %}
+
+                                            {{ item.product.product_name }}
+
+                                            {% if not forloop.last %}
+                                                ,
+                                            {% endif %}
+
+                                        {% empty %}
+
+                                            No products
+
+                                        {% endfor %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ order.status }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.order_date|date:"M d, Y" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No orders have been created yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Customers from Selected Cities -->
+    <div class="card shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Customers from Lahore or Islamabad
+            </h4>
+
+
+            {% if filtered_customers %}
+
+                <ul class="list-group">
+
+                    {% for customer in filtered_customers %}
+
+                        <li class="list-group-item">
+
+                            {{ customer.first_name }}
+                            {{ customer.last_name }}
+
+                            <span class="text-muted">
+                                — {{ customer.city }}
+                            </span>
+
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No customers found.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Low Stock Products -->
+    <div class="card shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Low Stock Products
+            </h4>
+
+            {% if low_stock_products %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for product in low_stock_products %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ product.product_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ product.stock }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No low stock products.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Highest Amount Orders -->
+    <div class="card shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Highest Amount Orders
+            </h4>
+
+            {% if highest_amount_orders %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Total Amount</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for order in highest_amount_orders %}
+
+                                <tr>
+
+                                    <td>
+                                        #{{ order.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.customer.first_name }}
+                                        {{ order.customer.last_name }}
+                                    </td>
+
+                                    <td>
+                                        ${{ order.total_amount }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No orders available.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Most Frequent Customers -->
+    <div class="card shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <h4 class="mb-4">
+                Most Frequent Customers
+            </h4>
+
+            {% if frequent_customers %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+                                <th>Customer</th>
+                                <th>Total Orders</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for customer in frequent_customers %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ customer.first_name }}
+                                        {{ customer.last_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ customer.order_count }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No customers available.
                 </p>
 
             {% endif %}

@@ -1,207 +1,166 @@
-
 {% extends "base.html" %}
 
 {% block content %}
 
 <div class="container mt-5 mb-5">
 
-    <div class="row justify-content-center">
+    <!-- PAGE HEADING -->
+    <div class="mb-4">
+        <h1 class="fw-bold">
+            {% if order %}
+                Update Order
+            {% else %}
+                Create Order
+            {% endif %}
+        </h1>
 
-        <div class="col-md-8">
-
-            <div class="card shadow-sm">
-
-                <div class="card-body">
-
-                    <h2 class="mb-4">
-                        {% if order %}
-                            Update Order
-                        {% else %}
-                            Create Order
-                        {% endif %}
-                    </h2>
-
-
-                    <form method="POST">
-
-                        {% csrf_token %}
+        <p class="text-muted">
+            Add customer information and order items.
+        </p>
+    </div>
 
 
-                        <!-- Customer -->
+    <!-- MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
-                        <div class="mb-3">
 
-                            <label class="form-label">
-                                Customer
-                            </label>
+    <!-- MAIN FORM -->
+    <form method="POST" id="order-form">
 
-                            <select
-                                name="customer"
-                                class="form-select"
-                                required
+        {% csrf_token %}
+
+
+        <!-- ORDER INFORMATION -->
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <h4 class="mb-4">
+                    Order Information
+                </h4>
+
+
+                <!-- CUSTOMER -->
+                <div class="mb-3">
+
+                    <label
+                        for="customer"
+                        class="form-label"
+                    >
+                        Customer
+                    </label>
+
+                    <select
+                        name="customer"
+                        id="customer"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Select Customer
+                        </option>
+
+                        {% for customer in customers %}
+
+                            <option
+                                value="{{ customer.id }}"
+                                {% if order and order.customer.id == customer.id %}
+                                    selected
+                                {% endif %}
                             >
 
-                                <option value="">
-                                    Select Customer
-                                </option>
+                                {{ customer.first_name }}
+                                {{ customer.last_name }}
 
-                                {% for customer in customers %}
+                            </option>
 
-                                    <option
-                                        value="{{ customer.id }}"
-                                        {% if order and order.customer.id == customer.id %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ customer.first_name }}
-                                        {{ customer.last_name }}
-                                    </option>
+                        {% endfor %}
 
-                                {% endfor %}
+                    </select>
 
-                            </select>
-
-                        </div>
+                </div>
 
 
-                        <!-- Status -->
+                <!-- STATUS -->
+                <div class="mb-3">
 
-                        <div class="mb-4">
-
-                            <label class="form-label">
-                                Status
-                            </label>
-
-                            <select
-                                name="status"
-                                class="form-select"
-                                required
-                            >
-
-                                <option value="Pending">
-                                    Pending
-                                </option>
-
-                                <option value="Processing">
-                                    Processing
-                                </option>
-
-                                <option value="Completed">
-                                    Completed
-                                </option>
-
-                            </select>
-
-                        </div>
+                    <label
+                        for="status"
+                        class="form-label"
+                    >
+                        Order Status
+                    </label>
 
 
-                        {% if not order %}
+                    <select
+                        name="status"
+                        id="status"
+                        class="form-select"
+                        required
+                    >
 
-                            <!-- Products -->
-
-                            <h5 class="mb-3">
-                                Select Products
-                            </h5>
-
-                            {% for product in products %}
-
-                                <div class="card mb-3">
-
-                                    <div class="card-body">
-
-                                        <div class="row align-items-center">
-
-                                            <div class="col-md-7">
-
-                                                <div class="form-check">
-
-                                                    <input
-                                                        class="form-check-input"
-                                                        type="checkbox"
-                                                        name="products"
-                                                        value="{{ product.id }}"
-                                                        id="product{{ product.id }}"
-                                                    >
-
-                                                    <label
-                                                        class="form-check-label"
-                                                        for="product{{ product.id }}"
-                                                    >
-
-                                                        <strong>
-                                                            {{ product.product_name }}
-                                                        </strong>
-
-                                                        <br>
-
-                                                        <small class="text-muted">
-                                                            Price:
-                                                            ${{ product.product_price }}
-                                                            |
-                                                            Stock:
-                                                            {{ product.stock }}
-                                                        </small>
-
-                                                    </label>
-
-                                                </div>
-
-                                            </div>
+                        <option value="">
+                            Select Status
+                        </option>
 
 
-                                            <div class="col-md-5">
-
-                                                <label class="form-label">
-                                                    Quantity
-                                                </label>
-
-                                                <input
-                                                    type="number"
-                                                    name="quantity_{{ product.id }}"
-                                                    class="form-control"
-                                                    min="1"
-                                                    value="1"
-                                                >
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            {% empty %}
-
-                                <div class="alert alert-warning">
-                                    No products available.
-                                </div>
-
-                            {% endfor %}
-
-                        {% endif %}
-
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                        >
-                            {% if order %}
-                                Update Order
-                            {% else %}
-                                Create Order
+                        <option
+                            value="Pending"
+                            {% if order and order.status == "Pending" %}
+                                selected
                             {% endif %}
-                        </button>
-
-
-                        <a
-                            href="{% url 'order_list' %}"
-                            class="btn btn-secondary"
                         >
-                            Cancel
-                        </a>
+                            Pending
+                        </option>
 
-                    </form>
+
+                        <option
+                            value="Processing"
+                            {% if order and order.status == "Processing" %}
+                                selected
+                            {% endif %}
+                        >
+                            Processing
+                        </option>
+
+
+                        <option
+                            value="Shipped"
+                            {% if order and order.status == "Shipped" %}
+                                selected
+                            {% endif %}
+                        >
+                            Shipped
+                        </option>
+
+
+                        <option
+                            value="Delivered"
+                            {% if order and order.status == "Delivered" %}
+                                selected
+                            {% endif %}
+                        >
+                            Delivered
+                        </option>
+
+
+                        <option
+                            value="Cancelled"
+                            {% if order and order.status == "Cancelled" %}
+                                selected
+                            {% endif %}
+                        >
+                            Cancelled
+                        </option>
+
+                    </select>
 
                 </div>
 
@@ -209,8 +168,606 @@
 
         </div>
 
-    </div>
+
+        <!-- ORDER ITEMS -->
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <h4 class="mb-4">
+                    Order Items
+                </h4>
+
+
+                <!-- IMPORTANT FORMSET MANAGEMENT FORM -->
+                {{ formset.management_form }}
+
+
+                <!-- FORMSET CONTAINER -->
+                <div id="formset-container">
+
+                    {% for form in formset %}
+
+                        <div class="order-item-form border rounded p-4 mb-3">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                <h5 class="item-title mb-0">
+                                    Item {{ forloop.counter }}
+                                </h5>
+
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-sm delete-item"
+                                >
+                                    Delete Item
+                                </button>
+
+                            </div>
+
+
+                            <!-- PRODUCT -->
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Product
+                                </label>
+
+                                {{ form.product }}
+
+                            </div>
+
+
+                            <!-- QUANTITY -->
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Quantity
+                                </label>
+
+                                {{ form.quantity }}
+
+                                <!-- Stock error will appear here -->
+                                <div class="stock-error text-danger mt-2">
+                                </div>
+
+                            </div>
+
+
+                            <!-- DJANGO DELETE FIELD -->
+                            {% if form.DELETE %}
+
+                                <div style="display: none;">
+                                    {{ form.DELETE }}
+                                </div>
+
+                            {% endif %}
+
+
+                            <!-- DJANGO FORM ERRORS -->
+                            {% if form.errors %}
+
+                                <div class="text-danger mt-2">
+
+                                    {{ form.errors }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- EMPTY FORM -->
+                <div
+                    id="empty-form"
+                    style="display: none;"
+                >
+
+                    <div class="order-item-form border rounded p-4 mb-3">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h5 class="item-title mb-0">
+                                Item
+                            </h5>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm delete-item"
+                            >
+                                Delete Item
+                            </button>
+
+                        </div>
+
+
+                        <!-- PRODUCT -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Product
+                            </label>
+
+                            {{ formset.empty_form.product }}
+
+                        </div>
+
+
+                        <!-- QUANTITY -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Quantity
+                            </label>
+
+                            {{ formset.empty_form.quantity }}
+
+                            <div class="stock-error text-danger mt-2">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADD MORE ITEM -->
+                <button
+                    type="button"
+                    id="add-item"
+                    class="btn btn-secondary"
+                >
+                    + Add More Item
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORM BUTTONS -->
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                id="submit-order"
+            >
+
+                {% if order %}
+                    Update Order
+                {% else %}
+                    Create Order
+                {% endif %}
+
+            </button>
+
+
+            <a
+                href="{% url 'order_list' %}"
+                class="btn btn-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
 
 </div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    // =====================================================
+    // GET ELEMENTS
+    // =====================================================
+
+    const container = document.getElementById(
+        "formset-container"
+    );
+
+    const addButton = document.getElementById(
+        "add-item"
+    );
+
+    const emptyForm = document.getElementById(
+        "empty-form"
+    );
+
+    const totalForms = document.getElementById(
+        "id_form-TOTAL_FORMS"
+    );
+
+    const orderForm = document.getElementById(
+        "order-form"
+    );
+
+
+    // =====================================================
+    // GET STOCK FROM PRODUCT OPTION
+    // =====================================================
+
+    function getStock(productSelect) {
+
+        const selectedOption =
+            productSelect.options[
+                productSelect.selectedIndex
+            ];
+
+
+        if (!selectedOption) {
+            return null;
+        }
+
+
+        const text = selectedOption.textContent;
+
+
+        /*
+            Example option:
+
+            Computer - Stock: 2
+
+            We search for:
+
+            Stock: 2
+        */
+
+        const match = text.match(
+            /Stock:\s*(\d+)/
+        );
+
+
+        if (!match) {
+            return null;
+        }
+
+
+        return parseInt(
+            match[1]
+        );
+
+    }
+
+
+    // =====================================================
+    // CHECK ONE ITEM'S STOCK
+    // =====================================================
+
+    function checkStock(itemForm) {
+
+        const productSelect =
+            itemForm.querySelector(
+                ".product-select"
+            );
+
+
+        const quantityInput =
+            itemForm.querySelector(
+                'input[name$="-quantity"]'
+            );
+
+
+        const error =
+            itemForm.querySelector(
+                ".stock-error"
+            );
+
+
+        if (!productSelect || !quantityInput || !error) {
+            return true;
+        }
+
+
+        const stock =
+            getStock(productSelect);
+
+
+        const quantity =
+            parseInt(
+                quantityInput.value
+            );
+
+
+        // Clear old error
+        error.textContent = "";
+
+
+        // Nothing selected/entered yet
+        if (
+            !productSelect.value ||
+            !quantityInput.value
+        ) {
+            return true;
+        }
+
+
+        // Stock could not be found
+        if (stock === null) {
+            return true;
+        }
+
+
+        // Check quantity against stock
+        if (quantity > stock) {
+
+            error.textContent =
+                "Not enough stock. " +
+                "Only " +
+                stock +
+                " available.";
+
+            return false;
+        }
+
+
+        return true;
+
+    }
+
+
+    // =====================================================
+    // CHECK ALL ITEMS
+    // =====================================================
+
+    function checkAllStock() {
+
+        let valid = true;
+
+
+        const itemForms =
+            container.querySelectorAll(
+                ".order-item-form"
+            );
+
+
+        itemForms.forEach(function (itemForm) {
+
+            const itemIsValid =
+                checkStock(itemForm);
+
+
+            if (!itemIsValid) {
+                valid = false;
+            }
+
+        });
+
+
+        return valid;
+
+    }
+
+
+    // =====================================================
+    // PRODUCT CHANGE
+    // =====================================================
+
+    container.addEventListener(
+        "change",
+        function (event) {
+
+            if (
+                event.target.classList.contains(
+                    "product-select"
+                )
+            ) {
+
+                const itemForm =
+                    event.target.closest(
+                        ".order-item-form"
+                    );
+
+
+                checkStock(itemForm);
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // QUANTITY CHANGE
+    // =====================================================
+
+    container.addEventListener(
+        "input",
+        function (event) {
+
+            if (
+                event.target.name.endsWith(
+                    "-quantity"
+                )
+            ) {
+
+                const itemForm =
+                    event.target.closest(
+                        ".order-item-form"
+                    );
+
+
+                checkStock(itemForm);
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // ADD MORE ITEM
+    // =====================================================
+
+    addButton.addEventListener(
+        "click",
+        function () {
+
+            // Get current number of forms
+            const formNumber =
+                parseInt(
+                    totalForms.value
+                );
+
+
+            // Get the hidden empty form HTML
+            let newFormHTML =
+                emptyForm.innerHTML;
+
+
+            // Replace __prefix__ with form number
+            newFormHTML =
+                newFormHTML.replace(
+                    /__prefix__/g,
+                    formNumber
+                );
+
+
+            // Create temporary container
+            const temporaryDiv =
+                document.createElement(
+                    "div"
+                );
+
+
+            temporaryDiv.innerHTML =
+                newFormHTML;
+
+
+            // Get the new item form
+            const newForm =
+                temporaryDiv.firstElementChild;
+
+
+            // Update item number
+            newForm.querySelector(
+                ".item-title"
+            ).textContent =
+                "Item " +
+                (formNumber + 1);
+
+
+            // Add new form to page
+            container.appendChild(
+                newForm
+            );
+
+
+            // Increase TOTAL_FORMS
+            totalForms.value =
+                formNumber + 1;
+
+        }
+    );
+
+
+    // =====================================================
+    // DELETE ITEM
+    // =====================================================
+
+    container.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !event.target.classList.contains(
+                    "delete-item"
+                )
+            ) {
+                return;
+            }
+
+
+            const itemForm =
+                event.target.closest(
+                    ".order-item-form"
+                );
+
+
+            /*
+                If there is only one form,
+                don't remove it.
+
+                Instead clear its fields.
+            */
+
+            const allForms =
+                container.querySelectorAll(
+                    ".order-item-form"
+                );
+
+
+            if (allForms.length === 1) {
+
+                const product =
+                    itemForm.querySelector(
+                        ".product-select"
+                    );
+
+
+                const quantity =
+                    itemForm.querySelector(
+                        'input[name$="-quantity"]'
+                    );
+
+
+                if (product) {
+                    product.value = "";
+                }
+
+
+                if (quantity) {
+                    quantity.value = "";
+                }
+
+
+                return;
+            }
+
+
+            // Remove item from page
+            itemForm.remove();
+
+        }
+    );
+
+
+    // =====================================================
+    // PREVENT SUBMISSION IF STOCK IS INVALID
+    // =====================================================
+
+    orderForm.addEventListener(
+        "submit",
+        function (event) {
+
+            if (!checkAllStock()) {
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+
+});
+
+</script>
+
 
 {% endblock %}

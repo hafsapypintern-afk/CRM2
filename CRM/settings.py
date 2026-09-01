@@ -14,25 +14,29 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# Build paths inside the project like this:
+# BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+# ============================================================
+# Security
+# ============================================================
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-qo=nev#6*@+@w#343brdf3x$m#e&qf(7-hs@3r!h!8s*o@@(f+'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
 
+# ============================================================
 # Application definition
+# ============================================================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,11 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'website',
     'customers',
     'products',
     'orders',
 ]
+
+
+# ============================================================
+# Middleware
+# ============================================================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,7 +67,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# ============================================================
+# URLs
+# ============================================================
+
 ROOT_URLCONF = 'CRM.urls'
+
+
+# ============================================================
+# Templates
+# ============================================================
 
 TEMPLATES = [
     {
@@ -74,11 +94,13 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'CRM.wsgi.application'
 
 
+# ============================================================
 # Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+# ============================================================
 
 DATABASES = {
     "default": {
@@ -92,8 +114,9 @@ DATABASES = {
 }
 
 
+# ============================================================
 # Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
+# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -111,8 +134,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# ============================================================
 # Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
+# ============================================================
 
 LANGUAGE_CODE = 'en-us'
 
@@ -123,17 +147,70 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+# ============================================================
+# Static files
+# ============================================================
 
 STATIC_URL = 'static/'
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+# ============================================================
+# Session settings
+# ============================================================
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+SESSION_COOKIE_AGE = 60 * 60  # 1 hour
+
+SESSION_SAVE_EVERY_REQUEST = True
+
+
+# ============================================================
+# Email
+# ============================================================
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# ============================================================
+# Celery
+# ============================================================
+
+# Redis/Memurai is our message broker
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+
+
+# ============================================================
+# Logging
+# ============================================================
+
+LOGGING = {
+    "version": 1,
+
+    "disable_existing_loggers": False,
+
+    "handlers": {
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "logs" / "crm.log",
+        },
+    },
+
+    "loggers": {
+        "crm": {
+            "handlers": ["file"],
+            "level": "INFO",
+        },
     },
 }
